@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <chrono>
+#include <thread>
 
 #include "MazeGen.h"
 
@@ -139,10 +141,15 @@ void DfsBackTracking(std :: vector < std :: vector <char> > & Maze, MazeCell Sta
         
         if(!Found)
             Stack.pop_back();
+
+        std :: cout << "\033[H";
+        DisplayMaze(Maze, Current);
+        std :: this_thread :: sleep_for(std :: chrono :: milliseconds(50));
+      
     }
 }
 
-void DisplayMaze(std :: vector < std :: vector <char> > & Maze)
+void DisplayMaze(std :: vector < std :: vector <char> > & Maze, MazeCell & Current)
 {
     int Rows = Maze.size();
     int Cols = Maze[0].size();
@@ -155,7 +162,12 @@ void DisplayMaze(std :: vector < std :: vector <char> > & Maze)
     {
         std :: cout << '#';
         for(int j = 0; j < Cols; j ++)
-            std :: cout << Maze[i][j];
+        {
+            if(i == Current.Row && j == Current.Col)
+                std :: cout << "\033[31m" << 'X' << "\033[0m";
+            else
+               std :: cout << Maze[i][j];
+        }    
         std :: cout << '#';
         std :: cout << std :: endl;
     }
@@ -170,8 +182,10 @@ int main()
     std :: vector < std :: vector <char> > Maze = MazeInit();
     MazeCell Start = DefStart(Maze);
 
+    MazeCell Helper = {-1, -1};
+
     DfsBackTracking(Maze, Start);
-    DisplayMaze(Maze);
+    DisplayMaze(Maze, Helper);
 
     return 0;
 }
